@@ -96,12 +96,6 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    int width = (int) inputVideo.get(CAP_PROP_FRAME_WIDTH);
-    int height = (int) inputVideo.get(CAP_PROP_FRAME_HEIGHT);
-    Size S = Size(width, height); // set size of input frames
-
-    //src = imread("/home/anne/programming/openCV/test/1.jpg", IMREAD_COLOR);
-
     inputVideo >> src;
     if (src.empty()) return 0;
 
@@ -109,11 +103,6 @@ int main(int argc, char **argv)
     setMouseCallback("Source", mouseHandler, NULL);
     imshow("Source", src);
     waitKey(0);
-
-//    Mat newimage;
-//    newimage = imread("/home/anne/programming/openCV/VideoCapturing/12.jpg", IMREAD_COLOR);
-//    src.copyTo(newimage, mask);
-//    imwrite("/home/anne/programming/openCV/VideoCapturing/new.jpg", newimage);
 
     return 0;
 }
