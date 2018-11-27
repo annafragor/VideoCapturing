@@ -73,11 +73,6 @@ int main(int, char**)
         namedWindow("frame", WINDOW_AUTOSIZE);
         namedWindow("maskedFrame", WINDOW_AUTOSIZE);
 
-
-
-        //outputVideo.write(thisFrame); //save or
-        //outputVideo << frame;
-
         time_t rawtime;
         time(&rawtime);
         struct tm * timeinfo;
@@ -89,8 +84,7 @@ int main(int, char**)
             i++;
         else
             i = 0;
-        name = name + "-" + std::to_string(i) + ".jpg"; // Tue Nov 27 12:36:53 2018-1
-//        std::cout << "-" << name << "-" << std::endl;
+        name = name + "-" + std::to_string(i) + ".jpg"; // Tue Nov 27 12:36:53 2018-1.jpg
 
         imshow("frame", thisFrame);
         outputVideo << thisFrame;
@@ -118,7 +112,6 @@ int main(int, char**)
                 );
                 result = imwrite("/home/anne/programming/openCV/VideoCapturing/photos/" + name, savingFrame);
             }
-//            std::cout << result << "\n";
         }
         catch (const cv::Exception& ex)
         {
@@ -137,8 +130,6 @@ int main(int, char**)
 
         imshow("maskedFrame", thisFrame);
         outputVideoWithMask << thisFrame;
-
-
 
         waitKey(30);
     }
