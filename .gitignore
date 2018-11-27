@@ -1,3 +1,6 @@
-1.jpg
+./1.jpg
 12.jpg
 new.jpg
+
+cmake-build-debug/
+.idea/
