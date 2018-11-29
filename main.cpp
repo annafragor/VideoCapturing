@@ -131,7 +131,12 @@ int main(int, char**)
         imshow("maskedFrame", thisFrame);
         outputVideoWithMask << thisFrame;
 
-        waitKey(30);
+        if (waitKey(30) == 27) { // нажата ESC => finish program
+            break;
+        }
     }
+    destroyWindow("frame");
+    destroyWindow("maskedFrame");
+
     return 0;
 }
