@@ -67,7 +67,7 @@ void mouseHandler(int event, int x, int y, int, void*)
         fillPoly(mask, vpts, Scalar(255, 255, 255), 8, 0);
         bitwise_and(src, src, final, mask);
         imshow("Mask", mask);
-        imwrite("/home/anne/programming/openCV/VideoCapturing/mask.jpg", mask);
+        imwrite("/home/anne/programming/openCV/VideoCapturing/mask1.jpg", mask);
         imshow("Result", final);
         imshow("Source", img1);
     }
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
          << "right mouse button - create mask from points" << endl
          << "middle mouse button - reset" << endl;
 
-    VideoCapture inputVideo(0);
+    VideoCapture inputVideo(1);
     if (!inputVideo.isOpened())  // check if we succeeded
     {
         std::cout << "Couldn't connect to camera" << std::endl;
