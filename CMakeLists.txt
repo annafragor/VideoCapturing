@@ -9,10 +9,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}<CircularQueue.h>)
 
 add_library(CircularQueue STATIC ${CMAKE_CURRENT_SOURCE_DIR}/source/CircularQueue.cpp)
 
-add_executable(main ${SOURCE_FILES} main.cpp)
+add_executable(queueTest ${SOURCE_FILES} applications/queueTest.cpp)
+
+add_executable(main ${SOURCE_FILES} applications/main.cpp)
 target_link_libraries(main ${OpenCV_LIBS})
 
-add_executable(create_mask ${SOURCE_FILES} create_mask.cpp)
+add_executable(create_mask ${SOURCE_FILES} applications/create_mask.cpp)
 target_link_libraries(create_mask ${OpenCV_LIBS})
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)

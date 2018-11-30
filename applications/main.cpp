@@ -1,21 +1,14 @@
 #include <iostream>
+#include <typeinfo>
 #include <vector>
 #include <string>
-//#include <vector>
 #include <time.h>
-//#include <cv.h>
 
-#include <typeinfo>
-
-#include "opencv2/highgui/highgui.hpp"
-//#include <opencv2/core/core.hpp>
-
-//#include "opencv2/videoio.hpp"
-#include "opencv2/opencv.hpp"
 #include "opencv2/video/background_segm.hpp"
-//#include <opencv2/videoio.hpp>
-//#include <opencv2/imgproc/imgproc.hpp>
-#include "include/CircularQueue.h"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/opencv.hpp"
+
+#include "../include/CircularQueue.h"
 
 using namespace cv;
 
@@ -49,8 +42,9 @@ double correlation(cv::Mat& image_1, cv::Mat& image_2)
 
 int main(int, char**)
 {
-    const std::string outputFile = "/home/anne/programming/openCV/VideoCapturing/photos/cap.avi";
+//    const std::string outputFile = "/home/anne/programming/openCV/VideoCapturing/photos/cap.avi";
     const std::string outputFileWithMask = "/home/anne/programming/openCV/VideoCapturing/photos/cap_withmask.avi";
+    const std::string path = "/home/anne/programming/openCV/VideoCapturing/photos/";
 
     VideoCapture inputVideo(0); // open camera
     if (!inputVideo.isOpened())  // check if we succeeded
@@ -68,19 +62,11 @@ int main(int, char**)
     int height = (int) inputVideo.get(CAP_PROP_FRAME_HEIGHT);
     Size S = Size(width, height); // set size of input frames
 
-    VideoWriter outputVideo; // output stream to file (captured video)
-    outputVideo.open(outputFile, ex, inputVideo.get(CAP_PROP_FPS), S, true);
-    if (!outputVideo.isOpened())
-    {
-        std::cout  << "Could not open the output videofile for write: " << outputFile << std::endl;
-        return -1;
-    }
-
     VideoWriter outputVideoWithMask; // output stream to file (masked video)
     outputVideoWithMask.open(outputFileWithMask, ex, inputVideo.get(CAP_PROP_FPS), S, true);
     if (!outputVideoWithMask.isOpened())
     {
-        std::cout  << "Could not open the output videofile for write with mask: " << outputFile << std::endl;
+        std::cout  << "Could not open the output videofile for write with mask: " << outputFileWithMask << std::endl;
         return -1;
     }
 
@@ -95,12 +81,13 @@ int main(int, char**)
     double empiricalCoeff = 5;  // эмпирически(экспериментально) определямый коэффициент
                                  // по преодолении которого, мы засекаем движение в кадре
     bool movementDetected = false;
+    CircularQueue<Mat> queue(5*CAP_PROP_FPS);
 
-    std::string name = "";
+    std::string name;
     time_t rawtime0;
     time(&rawtime0);
     struct tm * prev_timeinfo = localtime(&rawtime0);
-    std::string timeinfo_str = "";
+    std::string timeinfo_str;
     std::string prev_timeinfo_str = std::string(asctime(prev_timeinfo));;
     int i = 0;
 
@@ -165,28 +152,28 @@ int main(int, char**)
             if (prevCorr < 0)
                 prevCorr = corr;
 
+            queue.push(savingFrame, name); // pushback savingFrame в очередь
+
             corr = correlation(res, prevRes);
             std::cout << corr << std::endl;
 
             if ((prevCorr >= 0) && (corr >= 0))  // если как минимум три кадра уже прошло (т.е. есть 2 корреляции)
             {
+                putText(savingFrame, // frame
+                        timeinfo_str.substr(0, timeinfo_str.size()-1), // string
+                        Point(100,100),
+                        FONT_HERSHEY_DUPLEX,
+                        0.8, // thickness
+                        Scalar(0,145,145) // color
+                );
                 // смотрим дельту между результатами корреляций
                 delta = abs(corr - prevCorr);  // delta = |corr - prevCorr|
                 if (delta > empiricalCoeff)  // если delta большая, то засекли движение (!)
                 {
-                    movementDetected = true;  // установили флаг
-                    putText(savingFrame, // frame
-                            timeinfo_str.substr(0, timeinfo_str.size()-1), // string
-                            Point(100,100),
-                            FONT_HERSHEY_DUPLEX,
-                            0.8, // thickness
-                            Scalar(0,145,145) // color
-                    );
                     std::cout << "move" << std::endl;
-                    // --------------------------------------------------------------------------
-                    // запись кадров из очереди на диск  // imwrite("/home/anne/programming/openCV/VideoCapturing/photos/" + name, savingFrame);
-                    // pushback savingFrame в очередь
-                    // --------------------------------------------------------------------------
+                    queue.save(path);  // запись кадров из очереди на диск
+                    std::cout << queue << std::endl;
+                    std::cout << queue << std::endl;
                 }
             }
 
