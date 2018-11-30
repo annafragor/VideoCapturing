@@ -5,8 +5,14 @@ find_package(OpenCV REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-add_executable(main ${SOURCE_FILES} main.cpp)
-add_executable(create_mask ${SOURCE_FILES} create_mask.cpp)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}<CircularQueue.h>)
 
+add_library(CircularQueue STATIC ${CMAKE_CURRENT_SOURCE_DIR}/source/CircularQueue.cpp)
+
+add_executable(main ${SOURCE_FILES} main.cpp)
 target_link_libraries(main ${OpenCV_LIBS})
+
+add_executable(create_mask ${SOURCE_FILES} create_mask.cpp)
 target_link_libraries(create_mask ${OpenCV_LIBS})
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
