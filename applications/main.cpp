@@ -97,7 +97,7 @@ bool processFrame(
     name[camIndex] += "-" + std::to_string(i) + ".jpg"; // Tue Nov 27 12:36:53 2018-1.jpg
 
     // показываем кадр с контурами движущихся объектов
-    imshow("frame" + std::to_string(camIndex), contouredFrame[camIndex]);
+//    imshow("frame" + std::to_string(camIndex), contouredFrame[camIndex]);
 
     // создаем кадр, который потенциально нужно сохранять в виде картинки
     // т.е. на него наложена маска
@@ -106,14 +106,17 @@ bool processFrame(
         thisFrame[camIndex].copyTo(prevFrame[camIndex]);
     prevFrame[camIndex].copyTo(thisFrame[camIndex], mask[camIndex]);  // накладывание маски на thisFrame
 
+    prevFrame[camIndex].copyTo(contouredFrame[camIndex], mask[camIndex]);  // накладывание маски на thisFrame
+    imshow("frame" + std::to_string(camIndex), contouredFrame[camIndex]);
+
     try  // проверка возникновения движения
     {
         bool result = false;
         Mat res;
         absdiff(thisFrame[camIndex], prevFrame[camIndex], res);  // res = разница между двумя кадрами
-        imshow("with_movement" + std::to_string(camIndex), res);
+//        imshow("with_movement" + std::to_string(camIndex), res);
         threshold(res, res, THRESH_OTSU, THRESH_TRIANGLE, THRESH_BINARY);  // res - чб (отфильтрованная??) разница между кадрами
-        imshow("with_movement_3" + std::to_string(camIndex), res);
+//        imshow("with_movement_3" + std::to_string(camIndex), res);
 
         if (prevRes[camIndex].empty())
             res.copyTo(prevRes[camIndex]);
@@ -243,15 +246,15 @@ int main(int, char**)
 
     namedWindow("frame0", WINDOW_AUTOSIZE);
     namedWindow("maskedFrame0", WINDOW_AUTOSIZE);
-    namedWindow("with_movement0", WINDOW_AUTOSIZE);
-    namedWindow("with_movement20", WINDOW_AUTOSIZE);
-    namedWindow("with_movement30", WINDOW_AUTOSIZE);
+//    namedWindow("with_movement0", WINDOW_AUTOSIZE);
+//    namedWindow("with_movement20", WINDOW_AUTOSIZE);
+//    namedWindow("with_movement30", WINDOW_AUTOSIZE);
 
     namedWindow("frame1", WINDOW_AUTOSIZE);
     namedWindow("maskedFrame1", WINDOW_AUTOSIZE);
-    namedWindow("with_movement1", WINDOW_AUTOSIZE);
-    namedWindow("with_movement21", WINDOW_AUTOSIZE);
-    namedWindow("with_movement31", WINDOW_AUTOSIZE);
+//    namedWindow("with_movement1", WINDOW_AUTOSIZE);
+//    namedWindow("with_movement21", WINDOW_AUTOSIZE);
+//    namedWindow("with_movement31", WINDOW_AUTOSIZE);
 
     // надо добавить проверку свободного места на диске
     for (;;)

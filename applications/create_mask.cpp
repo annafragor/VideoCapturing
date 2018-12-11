@@ -2,9 +2,12 @@
 #include "opencv2/imgcodecs/imgcodecs.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include <iostream>
+#include <string>
 
 using namespace std;
 using namespace cv;
+
+std::string filename = "/home/anne/programming/openCV/VideoCapturing/";
 
 Mat src, img1, mask, final;
 
@@ -67,7 +70,7 @@ void mouseHandler(int event, int x, int y, int, void*)
         fillPoly(mask, vpts, Scalar(255, 255, 255), 8, 0);
         bitwise_and(src, src, final, mask);
         imshow("Mask", mask);
-        imwrite("/home/anne/programming/openCV/VideoCapturing/mask1.jpg", mask);
+        imwrite(filename, mask);
         imshow("Result", final);
         imshow("Source", img1);
     }
@@ -85,24 +88,35 @@ void mouseHandler(int event, int x, int y, int, void*)
 
 int main(int argc, char **argv)
 {
-    cout << "left mouse button - set a point to create mask shape" << endl
-         << "right mouse button - create mask from points" << endl
-         << "middle mouse button - reset" << endl;
-
-    VideoCapture inputVideo(1);
-    if (!inputVideo.isOpened())  // check if we succeeded
+    if (argc == 2)
     {
-        std::cout << "Couldn't connect to camera" << std::endl;
-        return -1;
+//        std::cout << argv[1] << std::endl;
+        filename += "mask" + std::string(argv[1]) + ".jpg";
+        std::cout << "result mask is stored in: " << filename << std::endl << std::endl;
+
+        cout << "left mouse button - set a point to create mask shape" << endl
+             << "right mouse button - create mask from points" << endl
+             << "middle mouse button - reset" << endl;
+
+        int id = atoi(argv[1]);
+        VideoCapture inputVideo(id);
+        if (!inputVideo.isOpened())  // check if we succeeded
+        {
+            std::cout << "Couldn't connect to camera" << std::endl;
+            return -1;
+        }
+
+        inputVideo >> src;
+        if (src.empty()) return 0;
+
+        namedWindow("Source", WINDOW_AUTOSIZE);
+        setMouseCallback("Source", mouseHandler, NULL);
+        imshow("Source", src);
+        waitKey(0);
     }
-
-    inputVideo >> src;
-    if (src.empty()) return 0;
-
-    namedWindow("Source", WINDOW_AUTOSIZE);
-    setMouseCallback("Source", mouseHandler, NULL);
-    imshow("Source", src);
-    waitKey(0);
-
+    else
+    {
+        cout << "You should pass ONE argument: ID of your camera." << endl;
+    }
     return 0;
 }
